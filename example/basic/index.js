@@ -6,10 +6,22 @@ import {schema} from "prosemirror-schema-basic"
 import {addListNodes} from "prosemirror-schema-list"
 import {exampleSetup} from "prosemirror-example-setup"
 
+var nodes = schema.spec.nodes.append({
+  bla: {
+    inline: true,
+    marks: "",
+    group: "inline",
+    parseDOM: [{tag: "span"}],
+    toDOM: function toDOM(node) {
+      return ["span", {}, 'bla']
+    }
+  }
+});
+
 // Mix the nodes from prosemirror-schema-list into the basic schema to
 // create a schema with list support.
 const mySchema = new Schema({
-  nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
+  nodes: addListNodes(nodes, "paragraph block*", "block"),
   marks: schema.spec.marks
 })
 
@@ -20,3 +32,4 @@ window.view = new EditorView(document.querySelector("#editor"), {
   })
 })
 // }
+view.dispatch(view.state.tr.insert(0, view.state.schema.nodes.bla.create()));
